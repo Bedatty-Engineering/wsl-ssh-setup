@@ -135,7 +135,7 @@ function Set-MirroredMode {
 
 function Invoke-WslSetup($distro, $user) {
     Write-Host "==> Running setup-wsl.sh inside WSL ($distro / $user) - sudo may prompt for password" -ForegroundColor Cyan
-    $url = "$RepoRawBase/setup-wsl.sh"
+    $url = "$RepoRawBase/lib/setup-wsl.sh"
     wsl -d $distro -u $user -e bash -c "set -e; tmp=`$(mktemp); curl -fsSL '$url' -o `"`$tmp`"; bash `"`$tmp`"; rm -f `"`$tmp`""
     if ($LASTEXITCODE -ne 0) { Write-Error "WSL setup failed (exit $LASTEXITCODE)."; exit 1 }
 }

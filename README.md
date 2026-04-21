@@ -100,11 +100,11 @@ Orchestrators (run from Windows, drive both sides):
 - `setup.ps1` — installer. Runs the WSL setup via `wsl -e`, plus portproxy/firewall on Windows.
 - `teardown.ps1` — uninstaller. Mirror image of `setup.ps1`.
 
-Building blocks (run directly if you prefer):
-- `setup-wsl.sh` — inside WSL. Installs openssh-server, configures sshd on `0.0.0.0:22`.
-- `setup-windows.ps1` — Windows side only: portproxy + firewall.
-- `teardown-wsl.sh` — inside WSL. Purges openssh-server.
-- `teardown-windows.ps1` — Windows side only: removes portproxy and firewall.
+Building blocks under `lib/` (run directly if you prefer):
+- `lib/setup-wsl.sh` — inside WSL. Installs openssh-server, configures sshd on `0.0.0.0:22`.
+- `lib/setup-windows.ps1` — Windows side only: portproxy + firewall.
+- `lib/teardown-wsl.sh` — inside WSL. Purges openssh-server.
+- `lib/teardown-windows.ps1` — Windows side only: removes portproxy and firewall.
 
 ## Manual step by step
 
@@ -112,12 +112,12 @@ If you'd rather not use the orchestrator:
 
 **Inside WSL:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/setup-wsl.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/lib/setup-wsl.sh | bash
 ```
 
 **On Windows (PowerShell as Administrator):**
 ```powershell
-$u = "https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/setup-windows.ps1"
+$u = "https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/lib/setup-windows.ps1"
 irm $u -OutFile "$env:TEMP\setup-windows.ps1"; & "$env:TEMP\setup-windows.ps1"
 ```
 
@@ -168,4 +168,8 @@ In mirrored mode WSL binds to the Windows IP stack directly. If the Windows Open
 & "$env:TEMP\setup.ps1" -Mirrored -ConnectPort 2222 -ListenPort 2222
 ```
 
-(requires editing `/etc/ssh/sshd_config` in WSL to `Port 2222` — or just re-run `setup-wsl.sh` after adjusting the port manually in the config)
+(requires editing `/etc/ssh/sshd_config` in WSL to `Port 2222` — or just re-run `lib/setup-wsl.sh` after adjusting the port manually in the config)
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).

@@ -76,7 +76,7 @@ function Resolve-WslTarget {
 
 function Invoke-WslTeardown($distro, $user) {
     Write-Host "==> Running teardown-wsl.sh inside WSL (sudo may prompt for your WSL password)" -ForegroundColor Cyan
-    $url = "$RepoRawBase/teardown-wsl.sh"
+    $url = "$RepoRawBase/lib/teardown-wsl.sh"
     wsl -d $distro -u $user -e bash -c "set -e; tmp=`$(mktemp); curl -fsSL '$url' -o `"`$tmp`"; bash `"`$tmp`"; rm -f `"`$tmp`""
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "WSL teardown returned non-zero. Continuing with Windows-side cleanup."
