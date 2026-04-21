@@ -1,6 +1,6 @@
 # One-command installer. Runs both the WSL and Windows sides.
 #
-# Run this in your REGULAR PowerShell — NOT as Administrator. The script
+# Run this in your REGULAR PowerShell - NOT as Administrator. The script
 # will self-elevate only the Windows-side commands (portproxy + firewall).
 # This ensures WSL is invoked as your current user (not a different admin
 # account), so it targets the right distro/user.
@@ -28,7 +28,7 @@ param(
     [switch]$AllowAdmin,
     [string]$RepoRawBase = "https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main",
 
-    # Internal — used when the script re-invokes itself elevated to run only the Windows-admin bits.
+    # Internal - used when the script re-invokes itself elevated to run only the Windows-admin bits.
     [switch]$AdminPhase,
     [string]$WslIp = ""
 )
@@ -134,7 +134,7 @@ function Set-MirroredMode {
 }
 
 function Invoke-WslSetup($distro, $user) {
-    Write-Host "==> Running setup-wsl.sh inside WSL ($distro / $user) — sudo may prompt for password" -ForegroundColor Cyan
+    Write-Host "==> Running setup-wsl.sh inside WSL ($distro / $user) - sudo may prompt for password" -ForegroundColor Cyan
     $url = "$RepoRawBase/setup-wsl.sh"
     wsl -d $distro -u $user -e bash -c "set -e; tmp=`$(mktemp); curl -fsSL '$url' -o `"`$tmp`"; bash `"`$tmp`"; rm -f `"`$tmp`""
     if ($LASTEXITCODE -ne 0) { Write-Error "WSL setup failed (exit $LASTEXITCODE)."; exit 1 }
@@ -217,7 +217,7 @@ Do not run this script as Administrator.
 When elevated through UAC with a different admin account, wsl.exe runs in
 that other user's context and will target the WRONG WSL distro/user.
 
-Run it in a normal PowerShell window — the script will request elevation
+Run it in a normal PowerShell window - the script will request elevation
 only for the Windows-side commands (portproxy + firewall) via a UAC prompt.
 
 If you really know what you're doing, re-run with -AllowAdmin.

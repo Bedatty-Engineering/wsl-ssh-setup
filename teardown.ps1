@@ -1,6 +1,6 @@
 # One-command uninstall. Undoes both the WSL and Windows sides.
 #
-# Run this in your REGULAR PowerShell — NOT as Administrator. The script
+# Run this in your REGULAR PowerShell - NOT as Administrator. The script
 # will self-elevate only the Windows-side commands.
 #
 # Usage:
@@ -128,7 +128,7 @@ Do not run this script as Administrator.
 When elevated through UAC with a different admin account, wsl.exe runs in
 that other user's context and will target the WRONG WSL distro/user.
 
-Run it in a normal PowerShell window — the script will request elevation
+Run it in a normal PowerShell window - the script will request elevation
 only for the Windows-side commands via a UAC prompt.
 
 If you really know what you're doing, re-run with -AllowAdmin.
@@ -140,7 +140,7 @@ $target = Resolve-WslTarget
 if ($target) {
     Invoke-WslTeardown -distro $target.Distro -user $target.User
 } else {
-    Write-Host "==> No WSL distros detected — skipping WSL teardown." -ForegroundColor Yellow
+    Write-Host "==> No WSL distros detected - skipping WSL teardown." -ForegroundColor Yellow
 }
 
 if (Test-IsAdmin) { Invoke-AdminWork } else { Invoke-AdminPhase }
