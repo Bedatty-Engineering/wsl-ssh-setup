@@ -148,12 +148,18 @@ if (Test-IsAdmin) { Invoke-AdminWork } else { Invoke-AdminPhase }
 if ($DisableMirrored) {
     $cfg = Join-Path $env:USERPROFILE ".wslconfig"
     if (Test-Path $cfg) {
-        Write-Host "==> Removing networkingMode=mirrored from $cfg" -ForegroundColor Cyan
         $content = Get-Content $cfg -Raw
-        $content = [regex]::Replace($content, "(?m)^\s*networkingMode\s*=.*\r?\n?", "")
-        Set-Content -Path $cfg -Value $content -NoNewline
-        Write-Host "==> Shutting down WSL so the change takes effect" -ForegroundColor Cyan
-        wsl --shutdown
+        $updated = [regex]::Replace($content, "(?m)^\s*networkingMode\s*=.*\r?\n?", "")
+        if ($updated -ne $content) {
+            Write-Host "==> Removing networkingMode=mirrored from $cfg" -ForegroundColor Cyan
+            Set-Content -Path $cfg -Value $updated -NoNewline
+            Write-Host "==> Shutting down WSL so the change takes effect" -ForegroundColor Cyan
+            wsl --shutdown
+        } else {
+            Write-Host "==> networkingMode=mirrored not present in $cfg - nothing to do" -ForegroundColor DarkGray
+        }
+    } else {
+        Write-Host "==> No .wslconfig file - nothing to do" -ForegroundColor DarkGray
     }
 }
 

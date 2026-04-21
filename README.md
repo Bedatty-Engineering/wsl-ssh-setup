@@ -62,15 +62,12 @@ Before installing, the script shows which WSL distro and user it will target and
 
 ## One-command uninstall
 
+Removes sshd from WSL, the portproxy, the firewall rule, and `networkingMode=mirrored` from `.wslconfig` (if present — skipped silently otherwise).
+
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 $p = "$env:TEMP\teardown.ps1"
 irm https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/teardown.ps1 -OutFile $p
-& $p
-```
-
-Also remove `networkingMode=mirrored` from `.wslconfig`:
-```powershell
 & $p -DisableMirrored
 ```
 
