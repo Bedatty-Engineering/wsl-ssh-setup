@@ -26,7 +26,7 @@ Placeholders used throughout this README:
 
 ## One-command install (recommended)
 
-Run in **Windows PowerShell as Administrator**. This is the only thing you need — it installs `openssh-server` inside WSL, configures sshd, sets up the portproxy (or mirrored mode) and opens the firewall.
+Run in a **regular Windows PowerShell window — NOT as Administrator**. The script self-elevates only the Windows-side commands (portproxy + firewall) via a UAC prompt. This guarantees WSL is invoked under your real user session, targeting the correct distro/user. Running elevated with a different admin account (a common case when UAC asks for credentials) would point `wsl.exe` at the wrong user's WSL instance.
 
 **Classic mode:**
 ```powershell
