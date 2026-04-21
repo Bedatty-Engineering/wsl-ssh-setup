@@ -30,21 +30,21 @@ Run in a **regular Windows PowerShell window — NOT as Administrator**. The scr
 
 **Classic mode:**
 ```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 $p = "$env:TEMP\setup.ps1"
 irm https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/setup.ps1 -OutFile $p
-Unblock-File $p
 & $p
 ```
 
 **Mirrored mode (immune to WSL IP changes):**
 ```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 $p = "$env:TEMP\setup.ps1"
 irm https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/setup.ps1 -OutFile $p
-Unblock-File $p
 & $p -Mirrored
 ```
 
-> `Unblock-File` strips the mark-of-the-web attribute that Windows adds to files downloaded from the internet. Without it, the default PowerShell execution policy (`RemoteSigned`) blocks the script with `UnauthorizedAccess`.
+> `Set-ExecutionPolicy -Scope Process` loosens the policy only for the current PowerShell window (nothing persists). This works regardless of your machine/user policy and avoids needing `Unblock-File`. Close the window and the policy reverts automatically.
 
 Options:
 ```powershell
@@ -63,9 +63,9 @@ Before installing, the script shows which WSL distro and user it will target and
 ## One-command uninstall
 
 ```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 $p = "$env:TEMP\teardown.ps1"
 irm https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/teardown.ps1 -OutFile $p
-Unblock-File $p
 & $p
 ```
 
