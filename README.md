@@ -30,15 +30,21 @@ Run in a **regular Windows PowerShell window — NOT as Administrator**. The scr
 
 **Classic mode:**
 ```powershell
-$u = "https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/setup.ps1"
-irm $u -OutFile "$env:TEMP\setup.ps1"; & "$env:TEMP\setup.ps1"
+$p = "$env:TEMP\setup.ps1"
+irm https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/setup.ps1 -OutFile $p
+Unblock-File $p
+& $p
 ```
 
 **Mirrored mode (immune to WSL IP changes):**
 ```powershell
-$u = "https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/setup.ps1"
-irm $u -OutFile "$env:TEMP\setup.ps1"; & "$env:TEMP\setup.ps1" -Mirrored
+$p = "$env:TEMP\setup.ps1"
+irm https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/setup.ps1 -OutFile $p
+Unblock-File $p
+& $p -Mirrored
 ```
+
+> `Unblock-File` strips the mark-of-the-web attribute that Windows adds to files downloaded from the internet. Without it, the default PowerShell execution policy (`RemoteSigned`) blocks the script with `UnauthorizedAccess`.
 
 Options:
 ```powershell
@@ -57,13 +63,15 @@ Before installing, the script shows which WSL distro and user it will target and
 ## One-command uninstall
 
 ```powershell
-$u = "https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/teardown.ps1"
-irm $u -OutFile "$env:TEMP\teardown.ps1"; & "$env:TEMP\teardown.ps1"
+$p = "$env:TEMP\teardown.ps1"
+irm https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/teardown.ps1 -OutFile $p
+Unblock-File $p
+& $p
 ```
 
 Also remove `networkingMode=mirrored` from `.wslconfig`:
 ```powershell
-& "$env:TEMP\teardown.ps1" -DisableMirrored
+& $p -DisableMirrored
 ```
 
 ## Connect from another machine
