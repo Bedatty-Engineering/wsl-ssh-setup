@@ -15,7 +15,7 @@ Placeholders used throughout this README:
 
 | Placeholder | What it means | Example |
 |---|---|---|
-| `<GH_USER>/<GH_REPO>` | Your GitHub `user/repo` hosting the scripts | `alice/wsl-ssh-setup` |
+| `<GH_USER>/<GH_REPO>` | Your GitHub `user/repo` hosting the scripts | `Bedatty-Engineering/wsl-ssh-setup` |
 | `<WSL_USER>` | Your username inside WSL | `ubuntu` |
 | `<WINDOWS_LAN_IP>` | Windows host IP on the LAN (from `ipconfig`) | `192.168.x.y` |
 | `<WSL_INTERNAL_IP>` | WSL internal IP (from `hostname -I`) | `172.x.x.x` |
@@ -29,12 +29,12 @@ Placeholders used throughout this README:
 
 **In WSL:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/<GH_USER>/<GH_REPO>/main/setup-wsl.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/setup-wsl.sh | bash
 ```
 
 **In Windows (PowerShell as Administrator):**
 ```powershell
-$u = "https://raw.githubusercontent.com/<GH_USER>/<GH_REPO>/main/setup-windows.ps1"
+$u = "https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/setup-windows.ps1"
 irm $u -OutFile "$env:TEMP\setup-windows.ps1"
 & "$env:TEMP\setup-windows.ps1"
 # Pass args if needed:
