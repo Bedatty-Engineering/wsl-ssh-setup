@@ -24,9 +24,9 @@ function Assert-Admin {
 
 Assert-Admin
 
-Write-Host "==> Running teardown-wsl.sh inside WSL" -ForegroundColor Cyan
+Write-Host "==> Running teardown-wsl.sh inside WSL (sudo may prompt for your WSL password)" -ForegroundColor Cyan
 $url = "$RepoRawBase/teardown-wsl.sh"
-wsl -e bash -c "curl -fsSL '$url' | bash" 2>$null
+wsl -e bash -c "set -e; tmp=`$(mktemp); curl -fsSL '$url' -o `"`$tmp`"; bash `"`$tmp`"; rm -f `"`$tmp`""
 if ($LASTEXITCODE -ne 0) {
     Write-Warning "WSL teardown returned non-zero (WSL may be off or already clean). Continuing."
 }

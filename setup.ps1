@@ -73,9 +73,10 @@ networkingMode=mirrored
 }
 
 function Invoke-WslSetup {
-    Write-Host "==> Running setup-wsl.sh inside WSL" -ForegroundColor Cyan
+    Write-Host "==> Running setup-wsl.sh inside WSL (sudo may prompt for your WSL password)" -ForegroundColor Cyan
     $url = "$RepoRawBase/setup-wsl.sh"
-    wsl -e bash -c "curl -fsSL '$url' | bash"
+    # Download to a file first so bash doesn't consume stdin — sudo needs the TTY.
+    wsl -e bash -c "set -e; tmp=`$(mktemp); curl -fsSL '$url' -o `"`$tmp`"; bash `"`$tmp`"; rm -f `"`$tmp`""
     if ($LASTEXITCODE -ne 0) {
         Write-Error "WSL setup failed (exit $LASTEXITCODE)."
         exit 1
