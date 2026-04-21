@@ -24,6 +24,8 @@ Placeholders used throughout this README:
 
 - `setup-wsl.sh` — runs **inside WSL**. Installs openssh-server, configures and starts sshd.
 - `setup-windows.ps1` — runs **in Windows PowerShell as Administrator**. Creates the portproxy rule and firewall rule.
+- `teardown-wsl.sh` — runs **inside WSL**. Fully removes openssh-server and leftover config.
+- `teardown-windows.ps1` — runs **in Windows PowerShell as Administrator**. Removes the portproxy and firewall rules.
 
 ## Quick install (run remotely from GitHub)
 
@@ -43,6 +45,20 @@ irm $u -OutFile "$env:TEMP\setup-windows.ps1"
 ```
 
 > ⚠️ Piping remote scripts into a shell runs code blindly. For stronger guarantees, pin a specific commit (`/main/` → `/<commit-sha>/`) or download and inspect before executing.
+
+## Uninstall / clean slate
+
+**In WSL:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/teardown-wsl.sh | bash
+```
+
+**In Windows (PowerShell as Administrator):**
+```powershell
+$u = "https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/teardown-windows.ps1"
+irm $u -OutFile "$env:TEMP\teardown-windows.ps1"
+& "$env:TEMP\teardown-windows.ps1"
+```
 
 ## Step by step (manual)
 
