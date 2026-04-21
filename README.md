@@ -123,6 +123,88 @@ irm $u -OutFile "$env:TEMP\setup-windows.ps1"; & "$env:TEMP\setup-windows.ps1"
 
 ## Troubleshooting
 
+### SSH still fails right after a "successful" setup run
+
+If the install finished with no errors but you still can't reach the WSL from another machine, work through these checks in order — each one isolates a different layer.
+
+**1. Confirm the target IP.**
+You need the **Windows LAN IP**, not the WSL internal one.
+```powershell
+ipconfig | Select-String IPv4
+```
+Use the address that matches your network (e.g. `192.168.x.y`). `172.*` addresses are WSL-internal and not routable from other machines.
+
+**2. Confirm the client is on the same network.**
+```bash
+# from the client
+ping <WINDOWS_LAN_IP>
+```
+If ping fails: both machines aren't on the same LAN, or the router has client/AP isolation enabled (common on guest networks).
+
+**3. Confirm the port is open from the client.**
+```bash
+# Linux/macOS
+nc -zv <WINDOWS_LAN_IP> 22
+# Windows (from the client)
+Test-NetConnection -ComputerName <WINDOWS_LAN_IP> -Port 22
+```
+- **timeout** → Windows firewall is blocking. Check network profile (see below) and re-run `setup.ps1`.
+- **refused** → nothing listening. Either portproxy is missing (classic mode) or sshd died.
+
+**4. Check the Windows network profile.**
+Firewall rules with `Profile Any` still need a reachable profile. `Public` is frequently restrictive.
+```powershell
+Get-NetConnectionProfile
+# If Public, switch to Private:
+Set-NetConnectionProfile -InterfaceIndex <N> -NetworkCategory Private
+```
+
+**5. Test locally from Windows.**
+```powershell
+ssh <WSL_USER>@localhost -p 22
+```
+- If this works from Windows but not from the LAN: the problem is on the firewall/routing side.
+- If this fails too: sshd in WSL isn't reachable; continue.
+
+**6. Verify sshd inside WSL is actually running.**
+```bash
+sudo service ssh status
+sudo ss -tlnp | grep :22
+```
+Must show `LISTEN 0 128 0.0.0.0:22 sshd`. If it's `127.0.0.1:22`, sshd only accepts local connections — fix `/etc/ssh/sshd_config` to `ListenAddress 0.0.0.0` and `sudo service ssh restart`.
+
+**7. (Classic mode) Check portproxy is pointing at the current WSL IP.**
+The WSL IP changes on every Windows reboot.
+```powershell
+netsh interface portproxy show all
+wsl hostname -I
+```
+The `Connect Address` must match `wsl hostname -I`. If not, re-run `setup.ps1`.
+
+**8. (Mirrored mode) Check for port-22 conflict.**
+```powershell
+Get-Service sshd -ErrorAction SilentlyContinue
+Get-NetTCPConnection -LocalPort 22 -ErrorAction SilentlyContinue
+```
+If Windows OpenSSH Server is running, it owns port 22 and WSL's sshd can't bind there. Stop it or use a different port (see the section below).
+
+**9. Check the Hyper-V firewall (Windows 11 only).**
+```powershell
+Get-NetFirewallHyperVProfile
+Set-NetFirewallHyperVProfile -Name Public,Private,Domain -Enabled False
+```
+
+**10. Look at sshd logs in WSL.**
+```bash
+sudo journalctl -u ssh -n 50    # if systemd is enabled
+sudo tail -n 50 /var/log/auth.log
+```
+Failed login attempts (wrong key, wrong user) show up here.
+
+---
+
+### Symptom → cause reference
+
 | Symptom | Likely cause | Action |
 |---|---|---|
 | `Connection timed out` (plain) | Windows firewall / wrong network | Re-run `setup.ps1`, check the client is on the same LAN |
