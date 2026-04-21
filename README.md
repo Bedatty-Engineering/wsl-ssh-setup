@@ -14,7 +14,13 @@ command — it drives the WSL side too through `wsl -e bash -c`.
 Two networking modes are supported:
 
 - **Classic** (default) — `netsh portproxy` forwards Windows:22 → WSL:22. Works everywhere, but the WSL IP changes on every Windows reboot, so the portproxy needs to be recreated (just re-run `setup.ps1`).
-- **Mirrored** (`-Mirrored`) — WSL shares the Windows IP stack (`networkingMode=mirrored` in `.wslconfig`). No portproxy needed, immune to WSL IP changes. Requires Windows 11 + a recent WSL 2.
+- **Mirrored** (`-Mirrored`) — ⭐ **recommended.** WSL shares the Windows IP stack (`networkingMode=mirrored` in `.wslconfig`). No portproxy needed, immune to WSL IP changes. Requires Windows 11 + a recent WSL 2.
+
+## Requirements
+
+- Windows 10/11 with WSL 2 and at least one Linux distro installed (`wsl --install -d Ubuntu`).
+- Windows 11 + recent WSL 2 for `-Mirrored` mode.
+- **A WSL terminal must be open (or the distro otherwise running) when you try to SSH in.** WSL 2 shuts the distro's VM down after an idle timeout, and with it `sshd` stops. As long as at least one WSL session is active (any terminal window, VS Code remote, etc.), `sshd` keeps running and the SSH connection works. See [Keep WSL running in the background](#keep-wsl-running-in-the-background) below for ways to make this automatic.
 
 Placeholders used throughout this README:
 
@@ -36,7 +42,7 @@ irm https://raw.githubusercontent.com/Bedatty-Engineering/wsl-ssh-setup/main/set
 & $p
 ```
 
-**Mirrored mode (immune to WSL IP changes):**
+**Mirrored mode (⭐ recommended — immune to WSL IP changes):**
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 $p = "$env:TEMP\setup.ps1"
@@ -93,6 +99,23 @@ Host wsl-remote
     User <WSL_USER>
 ```
 Connect with: `ssh wsl-remote`.
+
+## Keep WSL running in the background
+
+WSL 2 shuts down the distro VM after a short idle period when no processes are running. When the VM is down, `sshd` isn't listening and new SSH connections fail with `Connection refused` or timeout. You need at least one active session keeping the distro alive. Options, from simplest to most automatic:
+
+**Option 1 — just keep a WSL terminal window open.** Works out of the box. The moment you close every terminal and wait a couple of minutes, the VM stops.
+
+**Option 2 — disable the idle shutdown entirely.** Add to `C:\Users\<you>\.wslconfig`:
+```ini
+[wsl2]
+vmIdleTimeout=-1
+```
+Then `wsl --shutdown` and reopen WSL once. The VM will stay alive until you reboot Windows.
+
+**Option 3 — auto-start WSL at Windows logon.** Create a shortcut to `wsl.exe -d <YourDistro> -e bash -c "sudo service ssh start && sleep infinity"` in `shell:startup` (run `explorer shell:startup` in the Run dialog). This launches a hidden WSL session on logon and keeps it running indefinitely, with sshd started.
+
+Option 2 is the lowest-friction for a machine you SSH into regularly.
 
 ## Files
 
