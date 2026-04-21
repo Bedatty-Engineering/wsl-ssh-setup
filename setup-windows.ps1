@@ -46,7 +46,7 @@ if ([string]::IsNullOrWhiteSpace($wslIp)) {
 }
 Write-Host "    WSL IP: $wslIp"
 
-Write-Host "==> Recreating portproxy rule ($ListenPort -> ${wslIp}:${ConnectPort})" -ForegroundColor Cyan
+Write-Host ("==> Recreating portproxy rule ({0} -> {1}:{2})" -f $ListenPort, $wslIp, $ConnectPort) -ForegroundColor Cyan
 netsh interface portproxy delete v4tov4 listenport=$ListenPort listenaddress=0.0.0.0 2>$null | Out-Null
 netsh interface portproxy add    v4tov4 listenport=$ListenPort listenaddress=0.0.0.0 connectport=$ConnectPort connectaddress=$wslIp
 

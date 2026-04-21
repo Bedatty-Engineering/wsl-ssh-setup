@@ -177,7 +177,7 @@ function Invoke-AdminWork {
         Set-Service -Name iphlpsvc -StartupType Automatic
         Start-Service -Name iphlpsvc -ErrorAction SilentlyContinue
 
-        Write-Host "==> [admin] Creating portproxy ($ListenPort -> ${WslIp}:${ConnectPort})" -ForegroundColor Cyan
+        Write-Host ("==> [admin] Creating portproxy ({0} -> {1}:{2})" -f $ListenPort, $WslIp, $ConnectPort) -ForegroundColor Cyan
         netsh interface portproxy delete v4tov4 listenport=$ListenPort listenaddress=0.0.0.0 2>$null | Out-Null
         netsh interface portproxy add    v4tov4 listenport=$ListenPort listenaddress=0.0.0.0 connectport=$ConnectPort connectaddress=$WslIp
     }
