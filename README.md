@@ -42,9 +42,13 @@ irm $u -OutFile "$env:TEMP\setup.ps1"; & "$env:TEMP\setup.ps1" -Mirrored
 
 Options:
 ```powershell
-& "$env:TEMP\setup.ps1" -ListenPort 2222     # expose on a non-default Windows port
+& "$env:TEMP\setup.ps1" -ListenPort 2222                       # non-default Windows port
 & "$env:TEMP\setup.ps1" -Mirrored -ConnectPort 2222
+& "$env:TEMP\setup.ps1" -WslDistro Ubuntu -WslUser alice       # target a specific WSL distro/user
+& "$env:TEMP\setup.ps1" -Yes                                   # skip the confirmation prompt
 ```
+
+Before installing, the script shows which WSL distro and user it will target and asks for confirmation. Pass both `-WslDistro` and `-WslUser` (or `-Yes`) to make it fully non-interactive.
 
 > `sudo` inside WSL will prompt for your WSL password interactively. Keep the terminal focused.
 
